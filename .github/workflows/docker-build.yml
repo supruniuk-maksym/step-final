@@ -21,6 +21,9 @@ jobs:
       - name: Build Docker image
         run: docker build -t supruniukmaksym/simple-server:latest .
 
+      - name: Debug DOCKER_USERNAME
+        run: echo "Username = ${{ secrets.DOCKER_USERNAME }}"
+
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/simple-server:latest
 
