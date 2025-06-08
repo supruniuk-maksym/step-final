@@ -18,9 +18,12 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: Set IMAGE_NAME env var
+        run: echo "IMAGE_NAME=$(echo '${{ secrets.DOCKER_USERNAME }}' | tr -d '\n\r')/simple-server:latest" >> $GITHUB_ENV
+
       - name: Build Docker image
-        run: docker build -t supruniukmaksym/simple-server:latest .
+        run: docker build -t "$IMAGE_NAME" .
 
       - name: Push Docker image
-        run: docker push supruniukmaksym/simple-server:latest
+        run: docker push "$IMAGE_NAME"
 
