@@ -17,3 +17,4 @@ new min 3
 new min 4
 new min 5
 new min 6
+new min 7
