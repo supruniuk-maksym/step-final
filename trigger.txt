@@ -11,3 +11,4 @@
 14 43
 
 new day
+new min 1
