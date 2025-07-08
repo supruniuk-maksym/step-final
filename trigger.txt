@@ -12,3 +12,4 @@
 
 new day
 new min 1
+new min 2
