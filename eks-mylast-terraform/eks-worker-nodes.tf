@@ -10,7 +10,7 @@ resource "aws_eks_node_group" "danit-amd" {
     min_size     = 1
   }
 
-  ami_type       = "AL2_x86_64"
+  ami_type = "AL2023_x86_64_STANDARD"
   instance_types = ["t3.medium"]
 
   labels = {
@@ -22,6 +22,7 @@ resource "aws_eks_node_group" "danit-amd" {
     aws_iam_role_policy_attachment.kubeedge-node-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.kubeedge-node-AmazonEC2ContainerRegistryReadOnly,
   ]
+  
   tags = merge(
     var.tags,
     { Name = "${var.name}-amd-node-group" }
