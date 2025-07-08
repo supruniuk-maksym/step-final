@@ -40,7 +40,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git remote set-url origin https://x-access-token:$GH_PAT@github.com/supruniuk-maksym/step-final.git
+          git remote set-url origin https://x-access-token:$GH_PAT@github.com/supruniuk-maksym/step-final
           git add k8s/deployment.yaml
           git commit -m "Update image tag to $IMAGE_TAG"
           git push origin HEAD
