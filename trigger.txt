@@ -15,3 +15,4 @@ new min 1
 new min 2
 new min 3
 new min 4
+new min 5
