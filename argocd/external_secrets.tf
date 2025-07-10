@@ -12,12 +12,15 @@ resource "helm_release" "external_secrets" {
   create_namespace = true
 
   set = [
-  {
-    name  = "installCRDs"
-    value = "true"
-  }
-]
-
+    {
+      name  = "installCRDs"
+      value = "true"
+    },
+    {
+      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = aws_iam_role.external_secrets_sa_role.arn
+    }
+  ]
 }
 
 resource "null_resource" "wait_for_external_secrets_crds" {
@@ -68,25 +71,24 @@ resource "aws_iam_role_policy_attachment" "attach_secretsmanager_policy" {
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 }
 
-resource "kubernetes_service_account" "external_secrets" {
-  metadata {
-    name      = "external-secrets"
-    namespace = "external-secrets"
-    annotations = {
-      "eks.amazonaws.com/role-arn" = aws_iam_role.external_secrets_sa_role.arn
-    }
-  }
-}
+#resource "kubernetes_service_account" "external_secrets" {
+#  metadata {
+#    name      = "external-secrets"
+#    namespace = "external-secrets"
+#    annotations = {
+#      "eks.amazonaws.com/role-arn" = aws_iam_role.external_secrets_sa_role.arn
+#    }
+#  }
+#}
 
 # --------------------------------------------
 # ClusterSecretStore
 # --------------------------------------------
 resource "kubernetes_manifest" "secret_store" {
   depends_on = [
-  null_resource.wait_for_external_secrets_crds,
-  kubernetes_service_account.external_secrets,
-  helm_release.external_secrets
-]
+    null_resource.wait_for_external_secrets_crds,
+    helm_release.external_secrets
+  ]
 
   manifest = {
     apiVersion = "external-secrets.io/v1beta1"
@@ -102,8 +104,8 @@ resource "kubernetes_manifest" "secret_store" {
           auth = {
             jwt = {
               serviceAccountRef = {
-                name      = kubernetes_service_account.external_secrets.metadata[0].name
-                namespace = kubernetes_service_account.external_secrets.metadata[0].namespace
+                name      = "external-secrets"
+                namespace = "external-secrets"
               }
             }
           }
@@ -147,10 +149,10 @@ resource "kubernetes_manifest" "external_secret_docker" {
           }
         },
         {
-          secretKey = "password"
+          secretKey = "docker"
           remoteRef = {
             key      = "devops/danit/docker"
-            property = "password"
+            property = "docker"
           }
         }
       ]
