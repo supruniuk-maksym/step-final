@@ -20,7 +20,7 @@ spec:
         - name: regcred
       containers:
         - name: simple-server
-          image: supruniukmaksym/simple-server:20250710-1901
+          image: supruniukmaksym/simple-server:20250710-1949
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
