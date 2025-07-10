@@ -14,7 +14,7 @@ resource "aws_eks_node_group" "danit-amd" {
   instance_types = ["t3.medium"]
 
   labels = {
-    "node-type" : "general"
+    "node-type" = "general"
   }
 
   depends_on = [
@@ -22,7 +22,7 @@ resource "aws_eks_node_group" "danit-amd" {
     aws_iam_role_policy_attachment.kubeedge-node-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.kubeedge-node-AmazonEC2ContainerRegistryReadOnly,
   ]
-  
+
   tags = merge(
     var.tags,
     { Name = "${var.name}-amd-node-group" }

@@ -14,6 +14,8 @@ spec:
       labels:
         app: simple-server
     spec:
+      nodeSelector:
+        node-type: small
       imagePullSecrets:
         - name: regcred
       containers:
