@@ -115,13 +115,13 @@ resource "kubernetes_manifest" "secret_store" {
   }
 }
 
-# --------------------------------------------
+## --------------------------------------------
 # ExternalSecret: Docker
 # --------------------------------------------
 resource "kubernetes_manifest" "external_secret_docker" {
   depends_on = [
-  kubernetes_manifest.secret_store
-]
+    kubernetes_manifest.secret_store
+  ]
 
   manifest = {
     apiVersion = "external-secrets.io/v1beta1"
@@ -139,20 +139,24 @@ resource "kubernetes_manifest" "external_secret_docker" {
       target = {
         name           = "regcred"
         creationPolicy = "Owner"
+        template = {
+          type = "kubernetes.io/dockerconfigjson"
+          data = {
+            ".dockerconfigjson" = jsonencode({
+              auths = {
+                "https://index.docker.io/v1/" = {
+                  auth = "{{ .docker }}"
+                }
+              }
+            })
+          }
+        }
       }
       data = [
         {
-          secretKey = "username"
-          remoteRef = {
-            key      = "devops/danit/docker"
-            property = "username"
-          }
-        },
-        {
           secretKey = "docker"
           remoteRef = {
-            key      = "devops/danit/docker"
-            property = "docker"
+            key = "devops/danit/docker"
           }
         }
       ]
