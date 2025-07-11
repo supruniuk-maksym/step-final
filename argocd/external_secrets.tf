@@ -142,21 +142,33 @@ resource "kubernetes_manifest" "external_secret_docker" {
         template = {
           type = "kubernetes.io/dockerconfigjson"
           data = {
-            ".dockerconfigjson" = jsonencode({
-              auths = {
-                "https://index.docker.io/v1/" = {
-                  auth = "{{ .docker }}"
-                }
-              }
-            })
+            ".dockerconfigjson" = <<EOT
+{
+  "auths": {
+    "https://index.docker.io/v1/": {
+      "username": "{{ .username }}",
+      "password": "{{ .password }}",
+      "auth": "{{ printf "%s:%s" .username .password | b64enc }}"
+    }
+  }
+}
+EOT
           }
         }
       }
       data = [
         {
-          secretKey = "docker"
+          secretKey = "username"
           remoteRef = {
-            key = "devops/danit/docker"
+            key      = "devops/danit/docker"
+            property = "username"
+          }
+        },
+        {
+          secretKey = "password"
+          remoteRef = {
+            key      = "devops/danit/docker"
+            property = "password"
           }
         }
       ]
